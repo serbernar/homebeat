@@ -1,0 +1,9 @@
+ha_install_dir: /opt/homeassistant
+ha_image: homeassistant/raspberrypi4-homeassistant:latest
+ha_container_name: homeassistant
+ha_host_port: 8123
+
+ha_config_repo: "https://github.com/serbernar/ha-config.git"
+ha_config_branch: "main"
+ha_config_dir: "{{ ha_install_dir }}/config"
+ha_update_dir: "{{ ha_install_dir }}/update-config"

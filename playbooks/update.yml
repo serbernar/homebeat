@@ -1,0 +1,5 @@
+- name: Update apt repositories on Raspberry Pi
+  hosts: raspi
+  become: true
+  roles:
+    - common

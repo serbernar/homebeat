@@ -1,0 +1,63 @@
+- name: Ensure homeassistant install directory exists
+  file:
+    path: "{{ ha_install_dir }}"
+    state: directory
+    owner: sberebko
+    group: sberebko
+    mode: '0755'
+
+- name: Ensure config directory exists
+  file:
+    path: "{{ ha_config_dir }}"
+    state: directory
+    owner: sberebko
+    group: sberebko
+    mode: '0755'
+
+- name: Ensure git is installed
+  apt:
+    name: git
+    state: present
+
+- name: Create temporary directory for update
+  file:
+    path: "{{ ha_update_dir }}"
+    state: directory
+    owner: sberebko
+    group: sberebko
+    mode: '0755'
+
+- name: Clone latest HA config from git
+  git:
+    repo: "{{ ha_config_repo }}"
+    dest: "{{ ha_update_dir }}"
+    force: yes
+    version: "{{ ha_config_branch }}"
+  become_user: sberebko
+  register: git_result
+
+- name: Copy config files
+  copy:
+    src: "{{ ha_update_dir }}/"
+    dest: "{{ ha_config_dir }}"
+    remote_src: yes
+    force: yes
+    owner: sberebko
+    group: sberebko
+  register: copy_result
+
+- name: Remove temporary update directory
+  file:
+    path: "{{ ha_update_dir }}"
+    state: absent
+
+- name: Deploy docker-compose file for Home Assistant
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ ha_install_dir }}/docker-compose.yml"
+
+- name: Start/Restart Home Assistant via docker compose
+  command: docker compose up -d
+  args:
+    chdir: "{{ ha_install_dir }}"
+  when: copy_result.changed

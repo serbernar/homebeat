@@ -1,0 +1,7 @@
+- name: Setup Raspberry Pi and install Docker
+  hosts: raspi
+  become: true
+  roles:
+    - common
+    - docker
+    - homeassistant

@@ -1,0 +1,11 @@
+version: '3'
+services:
+  {{ ha_container_name }}:
+    image: {{ ha_image }}
+    container_name: {{ ha_container_name }}
+    volumes:
+      - "{{ ha_install_dir }}/config:/config"
+    environment:
+      - TZ={{ ansible_facts['timezone']|default('UTC') }}
+    restart: unless-stopped
+    network_mode: host

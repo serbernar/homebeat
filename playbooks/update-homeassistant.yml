@@ -1,0 +1,6 @@
+---
+- name: Update HomeAssistant Configuration
+  hosts: raspi
+  become: true
+  roles:
+    - homeassistant
