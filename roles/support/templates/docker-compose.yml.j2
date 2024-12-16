@@ -1,0 +1,64 @@
+name: support
+
+services:
+  # Portainer CE
+  # Managing containers via nice web UI
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce
+    restart: unless-stopped
+    ports:
+      - 8000:8000 # Agent
+      - 9000:9000 # Web UI
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "{{  hb_volume_dir }}/portainer/data:/data"
+
+  # Watchtower
+  # A solution for automating Docker container base image updates
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower
+    restart: unless-stopped
+    environment:
+      WATCHTOWER_CLEANUP: 'true'
+      WATCHTOWER_WARN_ON_HEAD_FAILURE: 'never'
+      WATCHTOWER_NO_STARTUP_MESSAGE: 'true'
+      WATCHTOWER_SCHEDULE: '0 0 5 * * 6'  # Every Saturday at 5:00 AM
+      WATCHTOWER_NOTIFICATIONS: email
+      WATCHTOWER_NOTIFICATION_EMAIL_FROM: "{{ email_server_address }}"
+      WATCHTOWER_NOTIFICATION_EMAIL_TO: "{{email_server_address }}"
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER: "{{ email_server }}"
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT: "{{ email_server_port }}"
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER: "{{ email_server_user }}"
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD: "{{ email_server_password }}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # Homarr
+  # Fancy dashboard for displaying home services
+  homarr:
+    container_name: homarr
+    image: ghcr.io/ajnart/homarr:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
+      - "{{  hb_volume_dir }}/homarr/configs:/app/data/configs"
+      - "{{  hb_volume_dir }}/homarr/icons:/app/public/icons"
+      - "{{  hb_volume_dir }}/homarr/data:/data"
+    ports:
+      - 7575:7575
+
+  # Bitwarden
+  # Vaultwarden is a Rust implementation of Bitwarden API for less powerful devices
+  bitwarden:
+    container_name: bitwarden
+    image: vaultwarden/server
+    restart: unless-stopped
+    environment:
+      WEBSOCKET_ENABLED: 'true'
+    ports:
+      - 3838:80
+      - 3812:3012
+    volumes:
+      - "{{  hb_volume_dir }}/bitwarden:/data"

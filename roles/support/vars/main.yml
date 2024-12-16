@@ -1,0 +1,7 @@
+docker_services_dir: "/opt/docker-services"
+hb_volume_dir: "/opt/volumes"
+email_server: "smtp.gmail.com"
+email_server_port: "587"
+email_server_address: "your.email@gmail.com"
+email_server_user: "your.email@gmail.com"
+email_server_password: "your-app-password"

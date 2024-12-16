@@ -1,6 +1,6 @@
 - name: Ensure homeassistant install directory exists
   file:
-    path: "{{ ha_install_dir }}"
+    path: "{{ ha_base_dir }}"
     state: directory
     owner: sberebko
     group: sberebko
@@ -54,10 +54,10 @@
 - name: Deploy docker-compose file for Home Assistant
   template:
     src: docker-compose.yml.j2
-    dest: "{{ ha_install_dir }}/docker-compose.yml"
+    dest: "{{ ha_base_dir }}/docker-compose.yml"
 
 - name: Start/Restart Home Assistant via docker compose
   command: docker compose up -d
   args:
-    chdir: "{{ ha_install_dir }}"
+    chdir: "{{ ha_base_dir }}"
   when: copy_result.changed

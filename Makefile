@@ -15,3 +15,7 @@ update:  ## Update the project
 ha-update:  ## Update Home Assistant configuration
 	@echo "Updating Home Assistant configuration"
 	ansible-playbook $(PLAYBOOKS_DIR)/update-homeassistant.yml
+
+support-start:  ## Start support services
+	@echo "Starting support services"
+	ansible-playbook playbooks/support.yml

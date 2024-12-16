@@ -1,0 +1,7 @@
+- name: Manage Support Services
+  hosts: raspi
+  become: true
+  vars_files:
+    - roles/support/vars/main.yml
+  roles:
+    - support
